@@ -45,6 +45,9 @@ jobs:
             # eliminar el contenedor viejo sin importar su estado
             docker rm -f back-eval2 || true
 
+            # liberar el puerto 3000 si otro contenedor lo esta usando
+            docker ps -q --filter publish=3000 | xargs -r docker rm -f
+
             # correr el contenedor nuevo
             docker run -d \
               --name back-eval2 \
