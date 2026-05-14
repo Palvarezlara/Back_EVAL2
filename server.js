@@ -32,7 +32,7 @@ dbConnection.connect((err) => {
 
 // Ruta de prueba para verificar que el servidor funciona
 app.get('/', (req, res) => {
-    res.json({ 
+    res.json({
         message: 'API del proyecto funcionando correctamente',
         status: 'active',
         timestamp: new Date().toISOString()
@@ -49,19 +49,23 @@ app.get('/api/usuarios', (req, res) => {
             res.status(500).json({ error: 'Error al obtener usuarios' });
             return;
         }
-        res.json(results);
-    });
-});
+      res.json(results.map(user => ({
+
+  ...user,
+
+  nombre: user.nombre ? user.nombre.slice(0, 5) : ''
+
+})));
 
 // POST - Crear un nuevo usuario
 app.post('/api/usuarios', (req, res) => {
     const { nombre, email, edad } = req.body;
-    
+
     // Validar que los datos requeridos estén presentes
     if (!nombre || !email) {
         return res.status(400).json({ error: 'Nombre y email son requeridos' });
     }
-    
+
     const query = 'INSERT INTO usuarios (nombre, email, edad) VALUES (?, ?, ?)';
     dbConnection.query(query, [nombre, email, edad || null], (err, result) => {
         if (err) {
@@ -83,7 +87,7 @@ app.post('/api/usuarios', (req, res) => {
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { nombre, email, edad } = req.body;
-    
+
     const query = 'UPDATE usuarios SET nombre = ?, email = ?, edad = ? WHERE id = ?';
     dbConnection.query(query, [nombre, email, edad, id], (err, result) => {
         if (err) {
@@ -91,12 +95,12 @@ app.put('/api/usuarios/:id', (req, res) => {
             res.status(500).json({ error: 'Error al actualizar usuario' });
             return;
         }
-        
+
         if (result.affectedRows === 0) {
             res.status(404).json({ error: 'Usuario no encontrado' });
             return;
         }
-        
+
         res.json({
             message: 'Usuario actualizado exitosamente',
             id,
@@ -110,7 +114,7 @@ app.put('/api/usuarios/:id', (req, res) => {
 // DELETE - Eliminar un usuario
 app.delete('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
-    
+
     const query = 'DELETE FROM usuarios WHERE id = ?';
     dbConnection.query(query, [id], (err, result) => {
         if (err) {
@@ -118,12 +122,12 @@ app.delete('/api/usuarios/:id', (req, res) => {
             res.status(500).json({ error: 'Error al eliminar usuario' });
             return;
         }
-        
+
         if (result.affectedRows === 0) {
             res.status(404).json({ error: 'Usuario no encontrado' });
             return;
         }
-        
+
         res.json({
             message: 'Usuario eliminado exitosamente',
             id
