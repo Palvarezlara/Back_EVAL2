@@ -4,7 +4,7 @@ name: ci-cd pipeline
 on:
   push:
     branches:
-      - deploy
+      - develop
 
 jobs:
   build-and-deploy:
@@ -34,10 +34,10 @@ jobs:
         with:
           host: ${{ secrets.EC2_BACK_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.EC2_BACK_SSH_KEY }}
           proxy_host: ${{ secrets.EC2_HOST }}
           proxy_username: ${{ secrets.EC2_USER }}
-          proxy_key: ${{ secrets.EC2_SSH_KEY }}
+          proxy_key: ${{ secrets.EC2_FRONT_SSH_KEY }}
           script: |
             # bajar la imagen nueva (requiere NAT Gateway en subnet privada)
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/back-eval2:latest
