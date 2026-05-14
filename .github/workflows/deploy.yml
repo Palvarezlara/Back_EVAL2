@@ -42,9 +42,8 @@ jobs:
             # bajar la imagen nueva (requiere NAT Gateway en subnet privada)
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/back-eval2:latest
 
-            # parar el contenedor viejo si esta corriendo
-            docker stop back-eval2 || true
-            docker rm back-eval2 || true
+            # eliminar el contenedor viejo sin importar su estado
+            docker rm -f back-eval2 || true
 
             # correr el contenedor nuevo
             docker run -d \
